@@ -9,21 +9,19 @@ import java.util.Scanner;
  */
 public class BOJ1260 {
 
-    static int N;
-    static int M;
-    static int[][] array;
-    static boolean[] visited;
+    static int N; // 정점의 수
+    static int M; // 간선의 수
+    static int[][] array; // 인접행렬
+    static boolean[] visited; // 정점의 방문 확인
     static Queue queue;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
         M = sc.nextInt();
-        int start = sc.nextInt();
+        int start = sc.nextInt(); // 탐색을 시장할 정점의 번호
 
-        sc.nextLine();
-
-        array = new int[N+1][M+1];
+        array = new int[N+1][N+1];
         visited = new boolean[N+1];
         queue = new LinkedList<Integer>();
 
@@ -59,11 +57,10 @@ public class BOJ1260 {
 
         while(!queue.isEmpty()) {
             int temp = (int) queue.poll();
-
             System.out.print(temp + " ");
 
-            for (int i=1; i<=M; i++) {
-                if (array[v][i] == 1 && !visited[i]) {
+            for (int i=1; i<=N; i++) {
+                if (array[temp][i] == 1 && !visited[i]) {
                     visited[i] = true;
                     queue.offer(i);
                 }
