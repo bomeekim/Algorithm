@@ -12,7 +12,6 @@ class Practice1 {
 
     public static void main(String args[]) throws Exception	{
         Scanner sc = new Scanner(System.in);
-        //Scanner sc = new Scanner(new FileInputStream("input.txt"));
 
         int T = sc.nextInt();
         for(int test_case = 0; test_case < T; test_case++) {
