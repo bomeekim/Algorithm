@@ -14,10 +14,13 @@ public class BOJ12100 {
             {0, 1} //북
     };
 
+    static final int LIMIT = 5;
+    static final int ZERO = 0;
+
     static int N;
     static int[][] array;
-    static int max;
-    static int count;
+    static int max = 0;
+    static int step = 0;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -25,23 +28,16 @@ public class BOJ12100 {
         N = sc.nextInt();
         array = new int[N][N];
 
-        Point3 startMaxPoint = null;
-        max = 0;
-        count = 0;
-
         for (int i=0; i<N; i++) {
             for (int j=0; j<N; j++) {
                 array[i][j] = sc.nextInt();
-
-                if (max < array[i][j]) {
-                    max = array[i][j];
-
-                    startMaxPoint = new Point3(i, j, max);
-                }
             }
         }
 
-        dfs(startMaxPoint);
+        Point startPoint = new Point(0, 0);
+
+        dfs(startPoint);
+//        dfs(startPoint, 0);
 
         for (int i=0; i<N; i++) {
             for (int j=0; j<N; j++) {
@@ -51,99 +47,134 @@ public class BOJ12100 {
         }
     }
 
-    public static void dfs (Point3 maxPoint) {
+//    public static void dfs (Point p, int count) {
+    public static void dfs (Point p) {
 
         for (int d=0; d<DIRECTIONS; d++) {
-            int nextX = maxPoint.x + DIRECTION[d][0];
-            int nextY = maxPoint.y + DIRECTION[d][1];
+//            int nextX = p.x + DIRECTION[d][0];
+//            int nextY = p.y + DIRECTION[d][1];
+//
+//            if (nextX < 0 || nextX >= N || nextY < 0 || nextX >= N) continue;
 
-            if (nextX < 0 || nextX >= N || nextY < 0 || nextX >= N) continue;
 
-//			if (array[nextX][nextY] == 0) continue; // 4 0 4 이런 경우에 처리할 수가 없음
+            step = go(d, p);
 
-            if (array[nextX][nextY] == maxPoint.value || array[nextX][nextY] == 0) {
-                go(d, maxPoint);
-                count++;
-
-                System.out.println("count = " + count);
-
-                if (count < 5) {
-                    System.out.println("x = " + findMaxPoint().x + ", y = " + findMaxPoint().y + ", value = " + findMaxPoint().value);
-                    dfs(findMaxPoint());
-                }
+            if (step == LIMIT) {
+                return;
+            } else {
+                dfs(new Point(0, 0));
             }
-
-//			else {
-//				Point3 p = new Point3(nextX, nextY, array[nextX][nextY]);
-//
-//				System.out.println("x = " + nextX + " , y = " + nextY);
-//
-//				dfs(p);
-//			}
         }
     }
 
-    public static void go (int d, Point3 maxPoint) {
+    public static int go (int d, Point point) {
 
-        if (d == 0) {
-            for (int i=0; i<N; i++) {
-                if (array[maxPoint.x][i] == array[maxPoint.x+1][i]) { // 아래쪽에 같은 값이 있는 경우
-                    array[maxPoint.x+1][i] = array[maxPoint.x+1][i] + array[maxPoint.x][i]; // 아래쪽 행을 더해줌
-                    array[maxPoint.x][i] = 0; // 이전 값은 0으로 변경
+        int[][] temp = new int[N][N];
+        int count = 0;
+
+        System.out.println("step = " + step);
+
+        if (d == 0) { // 아래
+            for (int i=point.x; i<N; i++) {
+                for (int j=0; j<N; j++) {
+
+                    if (i+1 >= N) {
+                        temp[i][j] = array[i][j];
+                        System.out.println(temp[i][j]);
+                        break;
+                    }
+
+                    if (array[i][j] == array[i+1][j] || array[i+1][j] == ZERO) {
+                        array[i+1][j] = array[i+1][j] + array[i][j];
+                        array[i][j] = 0;
+                    }
                 }
             }
-        } else if (d == 1) {
-            for (int i=0; i<N; i++) {
-                if (array[maxPoint.x][i] == array[maxPoint.x-1][i]) { // 위쪽에 같은 값이 있는 경우
-                    array[maxPoint.x-1][i] = array[maxPoint.x-1][i] + array[maxPoint.x][i]; // 위쪽 행을 더해줌
-                    array[maxPoint.x][i] = 0; // 이전 값은 0으로 변경
+        } else if (d == 1) { // 위
+            for (int i=point.x; i<N; i++) {
+                for (int j=0; j<N; j++) {
+
+                    if (i-1 >= N) {
+                        temp[i][j] = array[i][j];
+                        System.out.println(temp[i][j]);
+                        break;
+                    }
+
+                    if (array[i][j] == array[i-1][j] || array[i-1][j] == ZERO) {
+                        array[i-1][j] = array[i-1][j] + array[i][j];
+                        array[i][j] = 0;
+                    }
                 }
             }
-        } else if (d == 2) {
+        } else if (d == 2) { //왼쪽
             for (int i=0; i<N; i++) {
-                if (array[i][maxPoint.y] == array[i][maxPoint.y-1]) { // 왼쪽에 같은 값이 있는 경우
-                    array[i][maxPoint.y-1] = array[i][maxPoint.y-1] + array[i][maxPoint.y]; //왼쪽 행과 더해줌
-                    array[i][maxPoint.y] = 0; // 이전 값은 0으로 변경
+                for (int j=point.y; j<N; j++) {
+
+                    if (j-1 >= N) {
+                        temp[i][j] = array[i][j];
+                        System.out.println(temp[i][j]);
+                        break;
+                    }
+
+                    if (array[i][j] == array[i][j-1] || array[i][j] == ZERO) {
+                        array[i][j-1] = array[i][j-1] + array[i][j];
+                        array[i][j] = 0;
+                    }
                 }
             }
         } else if (d == 3) {// 최대값을 기준으로 오른쪽에 같은 값이 있는지 확인
             for (int i=0; i<N; i++) {
-                if (array[i][maxPoint.y] == array[i][maxPoint.y+1]) { // 오른 쪽에 같은 값이 있는 경우
-                    array[i][maxPoint.y+1] = array[i][maxPoint.y+1] + array[i][maxPoint.y]; //오른쪽 행과 더해줌
-                    array[i][maxPoint.y] = 0; // 이전 값은 0으로 변경
-                }
-            }
-        }
-    }
+                for (int j=point.y; j<N; j++) {
 
-    public static Point3 findMaxPoint() {
+                    if (j+1 >= N) {
+                        temp[i][j] = array[i][j];
+                        System.out.println(temp[i][j]);
+                        break;
+                    }
 
-        Point3 p = null;
-        int tempMax = 0;
-
-        for (int i=0; i<N; i++) {
-            for (int j=0; j<N; j++) {
-                if (tempMax < array[i][j]) {
-                    tempMax = array[i][j];
-
-                    p = new Point3(i, j, tempMax);
+                    if (array[i][j] == array[i][j+1] || array[i][j] == ZERO) {
+                        array[i][j-1] = array[i][j+1] + array[i][j];
+                        array[i][j] = 0;
+                    }
                 }
             }
         }
 
-        return p;
+//        dfs(new Point(0, 0), step + 1);
+
+        count += 1;
+
+        return count;
     }
+
+//    public static Point findMaxPoint() {
+//
+//        Point p = null;
+//        int tempMax = 0;
+//
+//        for (int i=0; i<N; i++) {
+//            for (int j=0; j<N; j++) {
+//                if (tempMax < array[i][j]) {
+//                    tempMax = array[i][j];
+//
+//                    p = new Point(i, j, tempMax);
+//                }
+//            }
+//        }
+//
+//        return p;
+//    }
 }
 
-class Point3 {
+class Point {
     int x;
     int y;
-    int value;
+//    int value;
 
-    public Point3(int x, int y, int value) {
+    public Point(int x, int y) {
 
         this.x = x;
         this.y = y;
-        this.value = value;
+//        this.value = value;
     }
 }
