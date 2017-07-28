@@ -14,6 +14,7 @@ public class BOJ7576 {
     static final int[] dy = {1, -1, 0, 0}; // 동 서 남 북
 
     static final int RED = 1; // 익은 토마토
+    static final int GREEN = 0; // 익은 토마토
 
     static int N; // 상자의 세로 칸의 수
     static int M; // 상자의 가로 칸의 수
@@ -34,10 +35,10 @@ public class BOJ7576 {
             for (int j=0; j<M; j++) {
                 box[i][j] = sc.nextInt();
 
-                if (box[i][j] == 1) {
+                if (box[i][j] == RED) {
                     Tomato tomato = new Tomato(i, j);
                     queue.offer(tomato); // 익은 토마토인 경우 bfs 탐색을 위해 queue에 넣음
-                } else {
+                } else if (box[i][j] == GREEN) {
                     greenCount++; // 안 익은 토마토 개수 증가
                 }
             }
@@ -46,31 +47,57 @@ public class BOJ7576 {
         bfs();
     }
 
+
     public static void bfs() {
-        int result = 0;
+        int result = 1;
 
         while (!queue.isEmpty()) {
-            Tomato t = (Tomato) queue.poll();
-
-            if (greenCount == 0) break;
+            Tomato tomato = (Tomato) queue.poll();
 
             for (int d=0; d<DIRECTIONS; d++) {
+                int nextX = tomato.x + dx[d];
+                int nextY = tomato.y + dy[d];
 
-                Tomato next = new Tomato(t.x + dx[d], t.y + dy[d]);
+                if (nextX < 0 || nextX >= N || nextY < 0 || nextY >= M) continue;
+                else {
+                    if (box[nextX][nextY] == GREEN) {
+                        greenCount--;
+                        box[nextX][nextY] = box[tomato.x][tomato.y] + 1;
+                        queue.offer(new Tomato(nextX, nextY));
 
-                if (next.x < 0 || next.x >= N || next.y < 0 || next.y >= M) continue;
+                        if (result < box[nextX][nextY])
+                            result = box[nextX][nextY];
+                    }
+                }
 
-                greenCount--; // 익지 않은 토마토 개수 감소
-                box[next.x][next.y] = RED; // 익지않은 토마토 -> 익음
-                queue.offer(next);
+                System.out.println(greenCount + " , " + result);
             }
-            result++;
+
+            if (greenCount == 0) break;
         }
 
-        if (greenCount != 0) // 토마토가 모두 익지 못하는 상황일 때
+        if (greenCount == 0)
+            result -= 1;
+        else
             result = -1;
 
+        System.out.println("----------------");
+
+        print();
+
+        System.out.println("----------------");
+
+
         System.out.println(result);
+    }
+
+    public static void print() {
+        for (int i=0; i<N; i++) {
+            for (int j=0; j<M; j++) {
+                System.out.print(box[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
     private static class Tomato {
