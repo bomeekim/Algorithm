@@ -1,7 +1,10 @@
 [BOJ]
-- Backjoon online judge (https://www.acmicpc.net)
+- Backjoon Online Judge (https://www.acmicpc.net)
 - ID : thespring
 
 [codeground]
-- Samsung online coding site (https://www.codeground.org/)
+- Samsung Online Coding Site (https://www.codeground.org/)
 - ID : thespringg@naver.com
+
+[SW Expert Academy]
+- Samsung Electronics Co., Ltd. Online SW Learning Platform (https://www.swexpertacademy.com/main/main.do)
